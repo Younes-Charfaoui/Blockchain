@@ -65,6 +65,7 @@ class Blockchain:
             block_index += 1
         return True
 
+    # function to uniform the adding transaction process in each node. 
     def add_transaction(self, sender, receiver, amount):
         self.transactions.append({'sender':sender,
                                   'receiver':receiver,
