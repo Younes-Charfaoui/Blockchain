@@ -80,6 +80,35 @@ class Blockchain:
         # Then we take the netloc of the adress and add to the set.
         # example of netloc "https://127.0.0.1:5000/" netloc is "127.0.0.1:5000"
         self.nodes.add(parsed_url.netloc)
+     
+    # function that make concencus over the network of nodes.
+    def replace_chain(self):
+        # getting all the nodes
+        network = self.nodes
+        
+        # creating variables to hold reference to the bigest chain and it's length
+        longest_chain = None
+        max_length = len(self.chain)
+        for nodes in network:
+            
+            # requesting the chain in every node
+            response = requests.get(f'http://{node}/get_chain')
+            
+            if response.status_code == 200:
+                # getting the chain and the length of it in the current node
+                length = response.json()['length']
+                chain =response.json()['chain']
+                
+                # if the case that the current chain is bigger than the old one we update
+                if length > max_length and self.is_chain_valid(chain):
+                    max_length = length
+                    longest_chain = chain
+        # if the longest chain was updated then we update our chain.
+        if longest_chain:
+            self.chain = longest_chain
+            # and we return true.
+            return True
+        return False
 # Part 2 - Mining our Blockchain
 
 # Creating web app
