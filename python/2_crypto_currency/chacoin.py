@@ -16,6 +16,8 @@ class Blockchain:
         self.chain = []
         self.transactions = []
         self.create_block(proof = 1, previous_hash = '0')
+        # the nodes containig our blockchain
+        self.nodes = set()
         
     # this is a type general block , we can add anything
     def create_block(self, proof, previous_hash):
@@ -69,6 +71,15 @@ class Blockchain:
                                   'amount':amount})
         previous_block = self.get_previous_block()
         return previous_block['index'] + 1
+    
+    # function that add a node to the nodes set.
+    def add_node(self, address):
+        # we get the address and parsed it.
+        parsed_url = urlparse(address)
+        
+        # Then we take the netloc of the adress and add to the set.
+        # example of netloc "https://127.0.0.1:5000/" netloc is "127.0.0.1:5000"
+        self.nodes.add(parsed_url.netloc)
 # Part 2 - Mining our Blockchain
 
 # Creating web app
