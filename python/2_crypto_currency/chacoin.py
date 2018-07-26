@@ -19,13 +19,14 @@ class Blockchain:
         # the nodes containig our blockchain
         self.nodes = set()
         
-    # this is a type general block , we can add anything
+   
     def create_block(self, proof, previous_hash):
         block = { 'index' : len(self.chain) + 1,
                  'timestamp' : str(datetime.datetime.now()),
                  'proof' : proof,
                  'previous_hash' : previous_hash,
                  'transactions': self.transactions}
+        # make the transaction list empty
         self.transactions =  []
         self.chain.append(block)
         return block
@@ -33,6 +34,7 @@ class Blockchain:
     def get_previous_block(self):
         return self.chain[-1]
     
+    # this method will get the nonce to make a valid blockchain.
     def proof_of_work(self, previous_proof):
         new_proof = 1
         check_proof = False
@@ -49,6 +51,7 @@ class Blockchain:
         encoded_block = json.dumps(block, sort_keys = True).encode()
         return hashlib.sha256(encoded_block).hexdigest()
     
+    # simple function to validate a blockchain or not.
     def is_chain_valid(self, chain):
         previous_block = chain[0]
         block_index = 1
@@ -70,6 +73,8 @@ class Blockchain:
         self.transactions.append({'sender':sender,
                                   'receiver':receiver,
                                   'amount':amount})
+        
+        # returning the index of block containing the chain.
         previous_block = self.get_previous_block()
         return previous_block['index'] + 1
     
@@ -118,7 +123,7 @@ app = Flask(__name__)
 
 # Creating an address for the node on Port 5000.
 # we need the address to reward him with chacoin.
-node_adress = str(uuid4()).replace('-','')
+node_address = str(uuid4()).replace('-','')
    
 # Create a blockchain
 blockchain = Blockchain()
@@ -130,6 +135,8 @@ def mine_block():
     previous_proof = previous_block['proof']
     proof = blockchain.proof_of_work(previous_proof)
     previous_hash = blockchain.hash(previous_block)
+
+    # adding the transaction to the list of transaction via a function.
     blockchain.add_transaction(sender = node_address, receiver = 'Younes', amount = 1)
     block = blockchain.create_block(proof, previous_hash)
     response = {'message': 'Congratulations, you just mined a block!',
@@ -155,6 +162,30 @@ def is_valid():
     else:
         response = {'message': 'Houston, we have a problem. The Blockchain is not valid.'}
     return jsonify(response), 200
+
+# adding new transaction to the blockchain
+@app.route('/add_transaction',methods = ['POST'])
+def add_transaction():
+    # getting the data from a separate json file.
+    json = request.get_json()
+    
+    # the keys that should be included in the json file.
+    transaction_keys = ['sender' , 'receiver', 'amount']
+    
+    # return a error message if a key is not included in the file.
+    if not all (key in json for key in transaction_keys):
+        return 'Something Missing' , 400
+    
+    # getting the data from the json file.
+    index = blockchain.add_transaction(json[transaction_keys[0]],
+                                       json[transaction_keys[1]],
+                                       json[transaction_keys[2]])
+    
+    # output back the message of succes
+    response = {'message' : f'This transactoin will be added to block {index}'}
+    return response , 201
+
+
 
 #Running the app
 app.run(host = '0.0.0.0' , port = 5000)
