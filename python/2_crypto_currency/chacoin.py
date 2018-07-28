@@ -188,7 +188,7 @@ def add_transaction():
 # Part 3 - Decentralizing Blockchain
     
 # Connecting new nodes
- @app.route('/connect_node',methods = ['POST'])
+@app.route('/connect_node',methods = ['POST'])
 def connect_node():
     json = request.get_json()
     nodes = json.get('nodes')
@@ -204,7 +204,7 @@ def connect_node():
 @app.route('/replace_chain' , methods = ['GET'])
 def replace_chain():
 	is_chain_replaced = blockchain.replace_chain()
-    if is_valid:
+    if is_chain_replaced:
         is_chain_replaced = {'message': 'The nodes had diffrent chain. It will be replaced by the longest one.'
         ,'new_chain':blockchain.chain}
     else:

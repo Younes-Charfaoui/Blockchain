@@ -95,7 +95,7 @@ class Blockchain:
         # creating variables to hold reference to the bigest chain and it's length
         longest_chain = None
         max_length = len(self.chain)
-        for nodes in network:
+        for node in network:
             
             # requesting the chain in every node
             response = requests.get(f'http://{node}/get_chain')
@@ -188,7 +188,7 @@ def add_transaction():
 # Part 3 - Decentralizing Blockchain
     
 # Connecting new nodes
- @app.route('/connect_node',methods = ['POST'])
+@app.route('/connect_node',methods = ['POST'])
 def connect_node():
     json = request.get_json()
     nodes = json.get('nodes')
@@ -203,13 +203,13 @@ def connect_node():
 # Replacing by the new longest chain.
 @app.route('/replace_chain' , methods = ['GET'])
 def replace_chain():
-	is_chain_replaced = blockchain.replace_chain()
-    if is_valid:
-        is_chain_replaced = {'message': 'The nodes had diffrent chain. It will be replaced by the longest one.'
-        ,'new_chain':blockchain.chain}
+    is_chain_replaced = blockchain.replace_chain()
+    if is_chain_replaced:
+        response = {'message': 'The nodes had diffrent chain. It will be replaced by the longest one.'
+                    ,'new_chain':blockchain.chain}
     else:
         response = {'message': 'All good, the chain is the longest one.',
-        'actual_chain':blockchain.chain}
+                    'actual_chain':blockchain.chain}
     return jsonify(response), 200
 
 #Running the app
