@@ -34,7 +34,7 @@ class BlockChain {
             val previousHash = blocksArray.getJSONObject(i).getString("previousHash")
             val hash = blocksArray.getJSONObject(i).getString("hash")
             val nonce = blocksArray.getJSONObject(i).getLong("nonce")
-            chain.add(Block(number,nonce,data,previousHash,hash))
+            //chain.add(Block(number,nonce,data,previousHash,hash))
         }
     }
 
