@@ -1,6 +1,5 @@
 package library
 
-class Blockchain<T> {
-
+abstract class Blockchain<T> {
 
 }
